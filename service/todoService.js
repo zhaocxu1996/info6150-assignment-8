@@ -50,22 +50,40 @@ module.exports = {
             todo_content: content,
             todo_date: time().format('HH:mm MM/DD/YYYY')
         };
-        try {
-            TodoModel.update({'_id': id}, todo);
-            returnInfo = {
-                code: '200',
-                msg: `update successfully`,
-                data: `update todo ${id} successfully`
-            };
-        } catch (err) {
-            returnInfo = {
-                code: 404,
-                msg: `failed to update todo ${id}`,
-                data: `${err}`
-            };
-        } finally {
+        // try {
+        //     TodoModel.update({'_id': id}, todo);
+        //     returnInfo = {
+        //         code: '200',
+        //         msg: `update successfully`,
+        //         data: `update todo ${id} successfully`
+        //     };
+        // } catch (err) {
+        //     returnInfo = {
+        //         code: 404,
+        //         msg: `failed to update todo ${id}`,
+        //         data: `${err}`
+        //     };
+        // } finally {
+        //     return returnInfo;
+        // }
+        TodoModel.update({'_id': id}, todo, (err, res)=>{
+            console.log(err);
+            console.log(res);
+            if(err) {
+                returnInfo = {
+                    code: 404,
+                    msg: `failed to update todo ${id}`,
+                    data: `${err}`
+                };
+            } else {
+                returnInfo = {
+                    code: '200',
+                    msg: `update successfully`,
+                    data: `update todo ${id} successfully`
+                };
+            }
             return returnInfo;
-        }
+        })
     },
     //delete todo service
     delete : function(content, res) {
