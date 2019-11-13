@@ -27,24 +27,20 @@ module.exports = {
         }
     },
     //fetch todo service
-    find : async function (id) {
+    find : async function (res) {
         let returnInfo;
         try {
-            const todo = await TodoModel.findOne({'_id': id});
-            console.log(todo);
-            returnInfo = {
-                code: '200',
-                msg: `find todo ${id}`,
-                data: todo
-            };
+            const todos = await TodoModel.find({});
+            console.log(todos);
+            returnInfo =JSON.stringify(todos);
+            res.end(returnInfo)
         } catch (err) {
             returnInfo = {
                 code: 404,
-                msg: `failed to find todo ${id}`,
+                msg: `failed to find todo`,
                 data: `${err}`
             };
-        } finally {
-            return returnInfo;
+            res.end(JSON.stringify(returnInfo));
         }
     },
     //update todo service
@@ -72,23 +68,46 @@ module.exports = {
         }
     },
     //delete todo service
-    delete : function(id) {
+    delete : function(content, res) {
         let returnInfo;
-        try {
-            TodoModel.deleteOne({'_id': id});
-            returnInfo = {
-                code: 200,
-                msg: `delete successfully`,
-                data: `delete todo ${id} successfully`
+        const filter = {todo_content: content};
+        TodoModel.deleteOne(filter, (err, result)=>{
+            console.log(err);
+            console.log(result);
+            //Stringify return message
+            let r = JSON.stringify(result);
+            if (result.deletedCount==0) {
+                returnInfo = {
+                    code: 404,
+                    msg: `failed to delete todo ${content}`,
+                    data: `${r}`
+                };
+                res.end(JSON.stringify(returnInfo));
+            } else {
+                returnInfo = {
+                    code: 200,
+                    msg: `delete ${content} successfully`,
+                    data: `${r}`
+                };
+                res.end(JSON.stringify(returnInfo));
             }
-        } catch (err) {
-            returnInfo = {
-                code: 404,
-                msg: `failed tp delete todo ${id}`,
-                data: `${err}`
-            };
-        } finally {
-            return returnInfo;
-        }
+        });
+        // let returnInfo;
+        // try {
+        //     returnInfo = {
+        //         code: 200,
+        //         msg: `delete successfully`,
+        //         data: `delete todo ${content} successfully`
+        //     }
+        // } catch (err) {
+        //     console.log(err);
+        //     returnInfo = {
+        //         code: 404,
+        //         msg: `failed tp delete todo ${content}`,
+        //         data: `${err}`
+        //     };
+        // } finally {
+        //     return returnInfo;
+        // }
     }
 };

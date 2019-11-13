@@ -4,12 +4,13 @@ const TodoService = require('../service/todoService');
 class todo {
     //fetch controller
     async fetch(req, res, next) {
-        let id = req.body.id;
-        console.log(id);
-        const output = await TodoService.find(id);
-        console.log(output);
+        // let id = req.body.id;
+        // console.log(id);
+        // const output = await TodoService.find();
+        // console.log(output);
         res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify(output));
+        // res.end(JSON.stringify(output));
+        TodoService.find(res);
     }
     //add controller
     async add(req, res, next) {
@@ -34,15 +35,17 @@ class todo {
     }
     //delete controller
     async delete(req, res, next) {
-        let id = req.body.id;
-        let resInfo = TodoService.delete(id);
-        res.statusCode = resInfo.code;
-        let output = {
-            message: resInfo.msg,
-            data: resInfo.data
-        }
+        let content = req.body.content;
         res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify(output));
+        TodoService.delete(content, res);
+        // let resInfo = TodoService.delete(content);
+        // res.statusCode = resInfo.code;
+        // let output = {
+        //     message: resInfo.msg,
+        //     data: resInfo.data
+        // }
+        // res.setHeader("Content-Type", "application/json");
+        // res.end(JSON.stringify(output));
     }
 }
 
