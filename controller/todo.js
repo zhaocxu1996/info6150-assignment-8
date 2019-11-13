@@ -6,12 +6,8 @@ class todo {
     async fetch(req, res, next) {
         let id = req.body.id;
         console.log(id);
-        let resInfo = TodoService.find(id);
-        res.statusCode = resInfo.code;
-        let output = {
-            message: resInfo.msg,
-            data: resInfo.data
-        }
+        const output = await TodoService.find(id);
+        console.log(output);
         res.setHeader("Content-Type", "application/json");
         res.end(JSON.stringify(output));
     }
@@ -32,13 +28,9 @@ class todo {
         let id = req.body.id;
         let content = req.body.content;
         let resInfo = TodoService.update(id, content);
-        res.statusCode = resInfo.code;
-        let output = {
-            message: resInfo.msg,
-            data: resInfo.data
-        }
+        console.log(resInfo)
         res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify(output));
+        res.end(JSON.stringify(resInfo));
     }
     //delete controller
     async delete(req, res, next) {

@@ -20,29 +20,32 @@ module.exports = {
             returnInfo = {
                 code: 404,
                 msg: 'create failed',
-                data: 'failed'
+                data: `${err}`
             };
         } finally {
             return returnInfo;
         }
     },
     //fetch todo service
-    find : function (id, resInfo) {
-        TodoModel.findById(id, (err, ret) => {
-            if (err) {
-                resInfo = {
-                    code: '404',
-                    msg: `cannot find todo ${id}`,
-                    data: `${ret}`
-                };
-            } else {
-                resInfo = {
-                    code: '200',
-                    msg: `find todo ${id} successfully`,
-                    data: `${ret}`
-                };
-            }
-        });
+    find : async function (id) {
+        let returnInfo;
+        try {
+            const todo = await TodoModel.findOne({'_id': id});
+            console.log(todo);
+            returnInfo = {
+                code: '200',
+                msg: `find todo ${id}`,
+                data: todo
+            };
+        } catch (err) {
+            returnInfo = {
+                code: 404,
+                msg: `failed to find todo ${id}`,
+                data: `${err}`
+            };
+        } finally {
+            return returnInfo;
+        }
     },
     //update todo service
     update : function(id, content) {
@@ -51,41 +54,41 @@ module.exports = {
             todo_content: content,
             todo_date: time().format('HH:mm MM/DD/YYYY')
         };
-        TodoModel.findByIdAndUpdate(id, todo, (err, ret) => {
-            if (err) {
-                returnInfo = {
-                    code: 404,
-                    msg: `cannot update todo ${id}`,
-                    data: ret
-                };
-            } else {
-                returnInfo = {
-                    code: 200,
-                    msg: `update todo ${id} successfully`,
-                    data: ret
-                }
-            }
-        })
-        return returnInfo;
+        try {
+            TodoModel.update({'_id': id}, todo);
+            returnInfo = {
+                code: '200',
+                msg: `update successfully`,
+                data: `update todo ${id} successfully`
+            };
+        } catch (err) {
+            returnInfo = {
+                code: 404,
+                msg: `failed to update todo ${id}`,
+                data: `${err}`
+            };
+        } finally {
+            return returnInfo;
+        }
     },
     //delete todo service
     delete : function(id) {
         let returnInfo;
-        TodoModel.findByIdAndDelete(id, (err, ret) => {
-            if (err) {
-                returnInfo = {
-                    code: 404,
-                    msg: `cannot delete todo ${id}`,
-                    data: ret
-                };
-            } else {
-                returnInfo = {
-                    code: 200,
-                    msg: `delete todo ${id} successfully`,
-                    data: ret
-                }
+        try {
+            TodoModel.deleteOne({'_id': id});
+            returnInfo = {
+                code: 200,
+                msg: `delete successfully`,
+                data: `delete todo ${id} successfully`
             }
-        })
-        return returnInfo;
+        } catch (err) {
+            returnInfo = {
+                code: 404,
+                msg: `failed tp delete todo ${id}`,
+                data: `${err}`
+            };
+        } finally {
+            return returnInfo;
+        }
     }
 };
